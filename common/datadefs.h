@@ -237,9 +237,9 @@ typedef struct
     float               outTemp;                /* ! degrees F            */
     uint16_t            inHumidity;             /* ! percent              */
     uint16_t            outHumidity;            /* ! percent              */
-    uint16_t            windSpeed;              /* ! mph                  */
+    float               windSpeed;              /* ! mph                  */
     uint16_t            windDir;                /* ! degrees              */
-    uint16_t            windGust;               /* ! mph                  */
+    float               windGust;               /* ! mph                  */
     uint16_t            windGustDir;            /* ! degrees              */
     float               rainRate;               /* ! in/hr                */
     float               sampleRain;             /* ! inches               */
@@ -260,7 +260,7 @@ typedef struct
     float               monthET;                /* inches                 */
     float               yearET;                 /* inches                 */
     float               intervalAvgWCHILL;      /* degrees F              */
-    uint16_t            intervalAvgWSPEED;      /* mph                    */
+    float               intervalAvgWSPEED;      /* mph                    */
     uint16_t            yearRainMonth;          /* 1-12 Rain Start Month  */
 
     // --- The following may or may not be supported for a given station ---

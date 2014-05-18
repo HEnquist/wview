@@ -211,9 +211,9 @@ int datafeedConvertLOOP_HTON(LOOP_PKT* dest, LOOP_PKT* src)
 
     dest->inHumidity                    = htons(src->inHumidity);
     dest->outHumidity                   = htons(src->outHumidity);
-    dest->windSpeed                     = htons(src->windSpeed);
+    dest->windSpeed                     = htonf(src->windSpeed);
     dest->windDir                       = htons(src->windDir);
-    dest->windGust                      = htons(src->windGust);
+    dest->windGust                      = htonf(src->windGust);
     dest->windGustDir                   = htons(src->windGustDir);
 
     dest->rainRate                      = htonf(src->rainRate);
@@ -238,7 +238,7 @@ int datafeedConvertLOOP_HTON(LOOP_PKT* dest, LOOP_PKT* src)
     dest->yearET                        = htonf(src->yearET);
     dest->intervalAvgWCHILL             = htonf(src->intervalAvgWCHILL);
 
-    dest->intervalAvgWSPEED             = htons(src->intervalAvgWSPEED);
+    dest->intervalAvgWSPEED             = htonf(src->intervalAvgWSPEED);
     dest->yearRainMonth                 = htons(src->yearRainMonth);
     dest->rxCheckPercent                = htons(src->rxCheckPercent);
     dest->tenMinuteAvgWindSpeed         = htons(src->tenMinuteAvgWindSpeed);
@@ -303,9 +303,9 @@ int datafeedConvertLOOP_NTOH(LOOP_PKT* dest, LOOP_PKT* src)
 
     dest->inHumidity                    = ntohs(src->inHumidity);
     dest->outHumidity                   = ntohs(src->outHumidity);
-    dest->windSpeed                     = ntohs(src->windSpeed);
+    dest->windSpeed                     = ntohf(src->windSpeed);
     dest->windDir                       = ntohs(src->windDir);
-    dest->windGust                      = ntohs(src->windGust);
+    dest->windGust                      = ntohf(src->windGust);
     dest->windGustDir                   = ntohs(src->windGustDir);
 
     dest->rainRate                      = ntohf(src->rainRate);
@@ -330,7 +330,7 @@ int datafeedConvertLOOP_NTOH(LOOP_PKT* dest, LOOP_PKT* src)
     dest->yearET                        = ntohf(src->yearET);
     dest->intervalAvgWCHILL             = ntohf(src->intervalAvgWCHILL);
 
-    dest->intervalAvgWSPEED             = ntohs(src->intervalAvgWSPEED);
+    dest->intervalAvgWSPEED             = ntohf(src->intervalAvgWSPEED);
     dest->yearRainMonth                 = ntohs(src->yearRainMonth);
     dest->rxCheckPercent                = ntohs(src->rxCheckPercent);
     dest->tenMinuteAvgWindSpeed         = ntohs(src->tenMinuteAvgWindSpeed);

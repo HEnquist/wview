@@ -73,6 +73,7 @@ typedef struct
     float   windAvgSpeed;
     float   windGustSpeed;
     float   windDir;
+    float   windtemp;
     float   rain;
     float   UV;
     int     statusSensor[TE923_MAX_CHANNELS];

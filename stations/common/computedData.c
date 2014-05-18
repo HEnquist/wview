@@ -938,7 +938,7 @@ ARCHIVE_PKT *computedDataGenerateArchive (WVIEWD_WORK *work)
     }
 
     // save the high wind speed in the loop packet
-    work->loopPkt.windGust = (uint16_t)ArcRecStore.value[DATA_INDEX_windGust];
+    work->loopPkt.windGust = (float)ArcRecStore.value[DATA_INDEX_windGust];
 
     ArcRecStore.value[DATA_INDEX_dewpoint]       =
         wvutilsCalculateDewpoint ((float)ArcRecStore.value[DATA_INDEX_outTemp],
@@ -969,6 +969,17 @@ ARCHIVE_PKT *computedDataGenerateArchive (WVIEWD_WORK *work)
     if (work->loopPkt.wxt510Hailrate != ARCHIVE_VALUE_NULL)
         ArcRecStore.value[DATA_INDEX_hailrate]       = (float)sensorGetHigh (&sample[SENSOR_HAILRATE]);
 
+    // hack, copy extra data from te923
+    if (work->loopPkt.extraTemp1 != ARCHIVE_VALUE_NULL)
+        ArcRecStore.value[DATA_INDEX_extraTemp1] = (float)work->loopPkt.extraTemp1;
+    if (work->loopPkt.extraHumid1 != ARCHIVE_VALUE_NULL)
+        ArcRecStore.value[DATA_INDEX_extraHumid1] = (float)work->loopPkt.extraHumid1;
+    if (work->loopPkt.extraTemp2 != ARCHIVE_VALUE_NULL)
+        ArcRecStore.value[DATA_INDEX_extraTemp2] = (float)work->loopPkt.extraTemp2;
+    if (work->loopPkt.extraHumid2 != ARCHIVE_VALUE_NULL)
+        ArcRecStore.value[DATA_INDEX_extraHumid2] = (float)work->loopPkt.extraHumid2;
+    if (work->loopPkt.extraTemp3 != ARCHIVE_VALUE_NULL)
+        ArcRecStore.value[DATA_INDEX_extraTemp3] = (float)work->loopPkt.extraTemp3;
 
     // Get a few directly from the last LOOP_PKT:
     if (work->loopPkt.rxCheckPercent != 0xFFFF)

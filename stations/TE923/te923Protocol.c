@@ -9,7 +9,13 @@
   REVISION HISTORY:
         Date            Engineer        Revision        Remarks
         03/03/2011      M.S. Teel       0               Original
- 
+        2013-07-24	H. Enquist 			Copy extra temp/hum sensors to extraTemp1&2
+							and extraHumidity1&2
+							Decode wind chill from wind sensor, 
+							store as extraTemp3
+							loosely based on the work by J. Sommrey
+							http://www.sommrey.de/wview_tfa_nexus/te923-hack.html
+
   NOTES:
         Parts of this implementation were inspired by the te923con project
         (C) Sebastian John (http://te923.fukz.org).
@@ -301,6 +307,42 @@ static int readStationData (WVIEWD_WORK *work)
                                 offset;
     }
 
+    // decode windchill from wind sensor:
+    //decodeTempHum(buf + 23, 0x40, &sensors->outtemp[2], NULL);
+    // static void decodeTempHum(uint8_t *val, uint8_t mask, float *temp, float *hum)
+    isInvalid = FALSE;
+    if (bcdDecode(buf[23] & 0x0F) > 9)
+    {
+        sensors->windtemp = ARCHIVE_VALUE_NULL;
+        if (((buf[23] & 0x0F) == 0x0C) || ((buf[23] & 0x0F) == 0x0B))
+        {
+            isInvalid = TRUE;
+        }
+    }
+    else
+    {
+        if ((buf[24] & 0x40) != 0x40)
+        {
+            sensors->windtemp = ARCHIVE_VALUE_NULL;
+            isInvalid = TRUE;
+        }
+        else
+        {
+            sensors->windtemp = (bcdDecode(buf[23]) / 10.0) + (bcdDecode(buf[24] & 0x0F) * 10.0);
+            if ((buf[24] & 0x20) == 0x20)
+            {
+                sensors->windtemp += 0.05;
+            }
+            if ((buf[24] & 0x80) != 0x80)
+            {
+                sensors->windtemp *= -1;
+            }
+            sensors->windtemp = wvutilsConvertCToF(sensors->windtemp);
+        }
+    }
+
+
+
     // decode wind direction:
     if (isInvalid)
     {
@@ -482,9 +524,9 @@ static void storeLoopPkt (WVIEWD_WORK *work, LOOP_PKT *dest, TE923_DATA *src)
 
     if (0 <= src->windAvgSpeed && src->windAvgSpeed <= 250)
     {
-        tempfloat = src->windAvgSpeed;
-        tempfloat += 0.5;
-        dest->windSpeed  = (uint16_t)tempfloat;
+        //tempfloat = src->windAvgSpeed;
+        //tempfloat += 0.5;
+        dest->windSpeed  = src->windAvgSpeed; //(uint16_t)tempfloat;
     }
 
     if (0 <= src->windDir && src->windDir <= 360)
@@ -497,9 +539,9 @@ static void storeLoopPkt (WVIEWD_WORK *work, LOOP_PKT *dest, TE923_DATA *src)
 
     if (0 <= src->windGustSpeed && src->windGustSpeed <= 250)
     {
-        tempfloat = src->windGustSpeed;
-        tempfloat += 0.5;
-        dest->windGust       = (uint16_t)tempfloat;
+        //tempfloat = src->windGustSpeed;
+        //tempfloat += 0.5;
+        dest->windGust = src->windGustSpeed;     //  = (uint16_t)tempfloat;
     }
 
     if (0 <= src->rain)
@@ -558,6 +600,13 @@ static void storeLoopPkt (WVIEWD_WORK *work, LOOP_PKT *dest, TE923_DATA *src)
         dest->extraHumidity[i-1]            = src->outhumidity[i];
         dest->extraTempBatteryStatus[i-1]   = src->statusSensor[i];
     }
+
+    dest->extraTemp1                    = src->outtemp[1];
+    dest->extraHumid1                = src->outhumidity[1];
+    dest->extraTemp2                    = src->outtemp[2];
+    dest->extraHumid2                = src->outhumidity[2];
+
+    dest->extraTemp3			= src->windtemp;
 
     dest->uvBatteryStatus               = src->statusUV;
     dest->windBatteryStatus             = src->statusWind;
